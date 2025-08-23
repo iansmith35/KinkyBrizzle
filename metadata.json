@@ -1,0 +1,5 @@
+{
+  "name": "KinkyBrizzle",
+  "description": "An e-commerce management dashboard and storefront that integrates with Printful for product creation and fulfillment, Etsy for marketplace listings, and LinkedIn for marketing.",
+  "requestFramePermissions": []
+}
