@@ -4,13 +4,13 @@ dotenv.config();
 
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { supabase } from './config/supabase';
-import productsRouter from './routes/products';
-import ordersRouter from './routes/orders';
-import cartRouter from './routes/cart';
-import designsRouter from './routes/designs';
-import aiRouter from './routes/ai';
-import printfulRouter from './routes/printful';
+import { supabase } from './config/supabase.js';
+import productsRouter from './routes/products.js';
+import ordersRouter from './routes/orders.js';
+import cartRouter from './routes/cart.js';
+import designsRouter from './routes/designs.js';
+import aiRouter from './routes/ai.js';
+import printfulRouter from './routes/printful.js';
 
 dotenv.config();
 

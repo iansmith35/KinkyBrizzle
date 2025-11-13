@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createPrintfulProduct, createPrintfulOrder, getPrintfulProducts } from '../services/printful';
+import { createPrintfulProduct, createPrintfulOrder, getPrintfulProducts } from '../services/printful.js';
 
 const router = Router();
 

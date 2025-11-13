@@ -1,10 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { GoogleGenAI } from '@google/genai';
 import OpenAI from 'openai';
-import { supabase } from '../config/supabase';
-import { createPrintfulProduct } from '../services/printful';
-import { generateImage } from '../services/imageGenerator';
-import { executeRubeWorkflow } from '../services/rube';
+import { supabase } from '../config/supabase.js';
+import { createPrintfulProduct } from '../services/printful.js';
+import { generateImage } from '../services/imageGenerator.js';
+import { executeRubeWorkflow } from '../services/rube.js';
 
 const router = Router();
 
