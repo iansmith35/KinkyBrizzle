@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Chat } from '@google/genai';
-import { createChatSession } from '../services/gemini';
 import { ChatMessage } from '../types';
 import Spinner from './Spinner';
 
@@ -11,40 +9,88 @@ interface ChatBotProps {
   onClose: () => void;
 }
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const ChatBot: React.FC<ChatBotProps> = ({ personaName, systemInstruction, welcomeMessage, onClose }) => {
-  const [chatSession, setChatSession] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([{ role: 'model', text: welcomeMessage }]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [functionCalls, setFunctionCalls] = useState<any[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    try {
-      const session = createChatSession(systemInstruction);
-      setChatSession(session);
-    } catch (error) {
-      console.error("Failed to create chat session:", error);
-      setMessages(prev => [...prev, { role: 'model', text: "Sorry, I'm having trouble connecting right now."}]);
-    }
-  }, [systemInstruction]);
+    // Load chat history
+    loadChatHistory();
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  const loadChatHistory = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/ai/history/${sessionId}`);
+      if (response.ok) {
+        const history = await response.json();
+        if (history.length > 0) {
+          const formattedMessages = history.map((h: any) => ({
+            role: h.role === 'assistant' ? 'model' : h.role,
+            text: h.message
+          }));
+          setMessages([{ role: 'model', text: welcomeMessage }, ...formattedMessages]);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load chat history:", error);
+    }
+  };
+
   const handleSend = async () => {
-    if (!userInput.trim() || isLoading || !chatSession) return;
+    if (!userInput.trim() || isLoading) return;
 
     const newMessages: ChatMessage[] = [...messages, { role: 'user', text: userInput }];
     setMessages(newMessages);
+    const currentInput = userInput;
     setUserInput('');
     setIsLoading(true);
 
     try {
-      const response = await chatSession.sendMessage({ message: userInput });
-      setMessages([...newMessages, { role: 'model', text: response.text }]);
+      const response = await fetch(`${API_URL}/api/ai/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: currentInput,
+          session_id: sessionId
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from AI');
+      }
+
+      const data = await response.json();
+      
+      // Show function calls if any
+      if (data.function_calls && data.function_calls.length > 0) {
+        setFunctionCalls(data.function_calls);
+        
+        // Add a message showing what actions the AI took
+        const actionsText = data.function_calls.map((fc: any) => 
+          `🤖 Action: ${fc.function}`
+        ).join('\n');
+        
+        setMessages([...newMessages, 
+          { role: 'model', text: actionsText },
+          { role: 'model', text: data.response }
+        ]);
+      } else {
+        setMessages([...newMessages, { role: 'model', text: data.response }]);
+      }
     } catch (error) {
-      console.error("Gemini API error:", error);
+      console.error("AI API error:", error);
       setMessages([...newMessages, { role: 'model', text: "I encountered an error. Please try again." }]);
     } finally {
       setIsLoading(false);

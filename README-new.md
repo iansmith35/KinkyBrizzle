@@ -27,19 +27,19 @@ An intelligent, AI-driven online apparel store powered by Google Gemini, featuri
 ### Backend
 - Node.js + Express
 - TypeScript
-- **Dual AI Support**: OpenAI GPT-4 (primary) with Google Gemini (fallback)
-- Function calling for autonomous operations
+- Google Gemini 2.5 Flash with function calling
 - Supabase (PostgreSQL) for database
 - Printful API for product fulfillment
-- AI image generation (OpenAI DALL-E or Gemini Imagen)
+- Image generation (OpenAI DALL-E or Gemini Imagen)
 - Rube.app for workflow automation
 
 ## 📋 Prerequisites
 
 - Node.js 18+ 
 - A Supabase account and project
-- **Either** Google Gemini API key **OR** OpenAI API key (or both for redundancy)
+- Google Gemini API key
 - Printful account and API key
+- (Optional) OpenAI API key for DALL-E image generation
 - (Optional) Rube.app API key for workflow automation
 
 ## 🏗 Setup Instructions
@@ -72,9 +72,9 @@ SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
 
-# AI (Configure at least one, or both for redundancy)
-GEMINI_API_KEY=your_gemini_key          # Google Gemini
-OPENAI_API_KEY=your_openai_key          # OpenAI GPT-4
+# AI
+GEMINI_API_KEY=your_gemini_key
+OPENAI_API_KEY=your_openai_key_optional
 
 # Printful
 PRINTFUL_API_KEY=your_printful_key
@@ -143,13 +143,11 @@ Make sure to set these in your Railway project:
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `GEMINI_API_KEY` (optional if using OpenAI)
-- `OPENAI_API_KEY` (optional if using Gemini)
+- `GEMINI_API_KEY`
 - `PRINTFUL_API_KEY`
+- `OPENAI_API_KEY` (optional)
 - `RUBE_API_KEY` (optional)
 - `VITE_API_URL` (set to your Railway backend URL)
-
-**Note**: Configure at least one AI provider (OpenAI or Gemini). The system will use OpenAI first and automatically fall back to Gemini if OpenAI fails, or vice versa.
 
 ## 🤖 Using the AI Agent
 
@@ -162,23 +160,6 @@ The AI agent can autonomously:
 5. **Execute Workflows**: Automatically sync to Etsy, post to social media, send emails
 
 Just chat naturally with the AI - it will take appropriate actions!
-
-### Dual AI Provider System 🔄
-
-The application supports both OpenAI GPT-4 and Google Gemini with automatic fallback:
-
-**How it works:**
-1. **Primary**: Uses OpenAI GPT-4 by default (if configured)
-2. **Fallback**: Automatically switches to Google Gemini if OpenAI fails
-3. **Flexibility**: You can configure either one or both providers
-4. **Reliability**: Ensures your AI agent stays online even if one provider has issues
-
-**Provider Priority:**
-- ✅ OpenAI GPT-4 → Google Gemini 2.5 Flash (recommended)
-- ✅ Google Gemini 2.5 Flash only (if no OpenAI key)
-- ✅ OpenAI GPT-4 only (if no Gemini key)
-
-The AI response includes which provider was used, so you can monitor performance.
 
 ## 📁 Project Structure
 
