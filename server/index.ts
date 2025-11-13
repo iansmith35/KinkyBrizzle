@@ -28,6 +28,24 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Root endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.json({ 
+    message: 'KinkyBrizzle API Server',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/health',
+      products: '/api/products',
+      orders: '/api/orders',
+      cart: '/api/cart',
+      designs: '/api/designs',
+      ai: '/api/ai',
+      printful: '/api/printful'
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
