@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
+// Load environment variables FIRST before any other imports
+dotenv.config();
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { supabase } from './config/supabase';
 import productsRouter from './routes/products';
 import ordersRouter from './routes/orders';
